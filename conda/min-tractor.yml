@@ -1,0 +1,14 @@
+# conda env create --name mintractor-<date> --file min-tractor.yml
+name: min-tractor
+channels:
+    - conda-forge
+    - default
+dependencies:
+    - astrometry
+    - fitsio
+    - pip
+    - python >=3.10.0
+    - setuptools
+    - swig
+    - pip:
+          - git+https://github.com/dstndstn/tractor@main

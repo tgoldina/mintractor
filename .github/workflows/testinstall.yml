@@ -1,0 +1,54 @@
+name: test_install
+
+on:
+  - push
+  - workflow_dispatch
+
+jobs:
+  test_install:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: [3.11]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          channels: conda-forge,defaults
+          channel-priority: strict
+          show-channel-urls: true
+          miniforge-variant: Mambaforge
+          use-mamba: true
+
+      - name: Update pip/wheel infrastructure
+        shell: bash -l {0}
+        run: |
+          mamba install -y -q pip wheel
+
+      - name: Install astrometry.net
+        shell: bash -l {0}
+        run: |
+          mamba install -y -q astrometry fitsio swig
+
+      - name: Install tractor
+        shell: bash -l {0}
+        run: |
+          pip install git+https://github.com/dstndstn/tractor@main
+
+      - name: List installed packages
+        shell: bash -l {0}
+        run: |
+          mamba list --show-channel-urls
+          pip list -v
+
+      - name: Test astrometry and tractor install
+        shell: bash -l {0}
+        run: |
+          echo $CONDA_PREFIX
+          mamba info --envs
+          python -c "from astrometry.util.miscutils import get_overlapping_region"
+          python -c "from tractor.sersic import *"

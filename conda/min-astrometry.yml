@@ -1,0 +1,8 @@
+name: min-astrometry
+channels:
+    - conda-forge
+    - default
+dependencies:
+    - astrometry
+    - python >=3.10.0
+
